@@ -1,11 +1,15 @@
 // Global object through which the lib220 functions can be accessed
 function lib220(config) {
+  // Convert an RGB color channel (in [0, 1]) to a hexadecimal string (note
+  // that each channel will be quantized using `Math.floor`, so the output is
+  // only accurate to 1/255 WRT the input)
   function hexColorChannel(n: number): string {
     let v = (Math.floor(n * 255)).toString(16);
     if (v.length < 2) { v = '0' + v; }
     return v;
   }
 
+  // Convert an RGB (decimal in [0, 1]) color array to a hexadecimal string
   function rgbToHex(rgb: number[]): string {
     let hex = '#';
     for (let i = 0; i < 3; ++i) {
@@ -14,15 +18,19 @@ function lib220(config) {
     return hex;
   }
 
+  // Check that `p` (the arguments to `func`) matches the list of parameter
+  // types given in `paramTypes`
   function argCheck(func: string, p: any, paramTypes: string[]): void {
     try {
       const n = paramTypes.length;
       if (p.length !== n) {
+        // Error: number of arguments passed to `func` does not match its arity
         throw new TypeError(`Invalid call to ${func}: ${n} arguments required but ${p.length} given`);
       }
       for (let i = 0; i < n; ++i) {
         const t = typeof(p[i]);
         if (t !== paramTypes[i]) {
+          // Error: mismatched types
           throw new TypeError(`Invalid call to ${func}: argument ${i} expected ${paramTypes[i]} but ${t} given`);
         }
       }
