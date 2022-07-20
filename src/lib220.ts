@@ -1,3 +1,4 @@
+// Global object through which the lib220 functions can be accessed
 function lib220(config) {
   function hexColorChannel(n: number): string {
     let v = (Math.floor(n * 255)).toString(16);
@@ -35,7 +36,8 @@ function lib220(config) {
       }
     }
   }
-
+  
+  // Check that a color (`col`) is an array of three numeric types
   function validateColor(col: any): void {
     try {
       if (
@@ -51,6 +53,7 @@ function lib220(config) {
   }
 
   class DrawingCanvas {
+    // Default attributes
     public width: number = 1;
     public height: number = 1;
     public ctx: CanvasRenderingContext2D | undefined = undefined;
@@ -62,18 +65,24 @@ function lib220(config) {
       if (typeof document === 'undefined') {
         return;  // for node
       }
+      // Create the actual canvas element in the DOM
       const canvases = document.getElementById('canvases')!,
             canvas = document.createElement('canvas');
+
+      // Copy attributes from this class to the canvas
       canvas.setAttribute('width', this.width.toString());
       canvas.setAttribute('height', this.height.toString());
       this.ctx = canvas.getContext('2d')!;
       canvas.style.paddingBottom = '5px';
       canvas.style.display = 'block';
       canvases.appendChild(canvas);
+
+      // Clear the newly instantiated canvas
       this.ctx.fillStyle = 'white';
       this.ctx.fillRect(0, 0, this.width, this.height);
     }
 
+    // Draw a line on the canvas associated with this instance
     public drawLine(x1: number, y1: number, x2: number, y2: number, col: number[]) {
       argCheck('drawLine', arguments, ['number', 'number', 'number', 'number', 'object']);
       validateColor(col);
@@ -87,6 +96,7 @@ function lib220(config) {
       this.ctx.stroke();
     }
 
+    // Draw an arc (e.g., an ellipse segment or circle)
     public drawArc(x: number, y: number, r: number, a0: number, a1: number, col: number[]) {
       argCheck('drawArc', arguments, ['number', 'number', 'number', 'number', 'number', 'object']);
       validateColor(col);
@@ -99,12 +109,15 @@ function lib220(config) {
       this.ctx.stroke();
     }
 
+    // Draw a circle at (`x`, `y`) with radius `r` and border color `col`
     public drawCircle(x: number, y: number, r: number, col: number[]) {
       argCheck('drawCircle', arguments, ['number', 'number', 'number', 'object']);
       validateColor(col);
       this.drawArc(x, y, r, 0, 2 * Math.PI, col);
     }
 
+    // Draw a circle at position (`x`, `y`) with radius `r`, filled with `col`
+    // TODO: check validity of numeric arguments?
     public drawFilledCircle(x: number, y: number, r: number, col: number[]) {
       argCheck('drawCircle', arguments, ['number', 'number', 'number', 'object']);
       validateColor(col);
@@ -117,6 +130,7 @@ function lib220(config) {
       this.ctx.fill();
     }
 
+    // Clear the canvas
     public clear() {
       argCheck('clear', arguments, []);
       if (this.ctx === undefined) {
